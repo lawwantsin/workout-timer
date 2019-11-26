@@ -138,7 +138,6 @@ class ReadSlide {
         break;
 
       case "text":
-        console.log(this.lastY, this.y);
         if (this.lastY == this.y) {
           this.y += parseInt(this.font);
         }
@@ -154,7 +153,7 @@ class ReadSlide {
     return slide.split("\n").map(l => l.trim()).filter(l => l != "");
   }
 
-  export() {
+  toArray() {
     return this.entities
   }
 }
@@ -167,6 +166,20 @@ class Game {
   constructor() {
     this.graphics = new Graphics();
     this.debugger = new Debug(this.graphics)
+    this.loopId = null;
+    this.animation = {
+      inputFPS: 0,
+      id: 0,
+      frameCount: 0,
+      fps: 0,
+      currentFPS: 0,
+      fpsInterval: 0,
+      startTime: 0,
+      now: 0,
+      then: 0,
+      elapsed: 0,
+      stop: false
+    }
     this.state = {
       slides: Data,
       current: 0,
@@ -175,15 +188,26 @@ class Game {
   }
 
   start() {
-    this.loop()
+    this.loopFPS(60)
     window.addEventListener("keydown", e => this.handlePress(e), false)
   }
 
   handlePress(e) {
-    console.log(e.key);
     if (e.key == "ArrowRight") this.state.current++;
     if (e.key == "ArrowLeft") this.state.current--;
+    if (e.key == "ArrowUp") {
+      this.animation.fps *= 2
+      this.loopFPS(this.animation.fps)
+    }
+    if (e.key == "ArrowDown") {
+      this.animation.fps /= 2;
+      this.loopFPS(this.animation.fps)
+    }
     if (e.key == "Escape") this.state.debugging = !this.state.debugging;
+    if (e.key == "CapsLock") {
+      this.animation.stop = !this.animation.stop;
+      this.loopFPS(this.animation.fps)
+    }
     if (this.state.current > this.state.slides.length - 1) this.state.current = 0;
     if (this.state.current < 0) this.state.current = this.state.slides.length - 1;
   }
@@ -192,15 +216,33 @@ class Game {
     const slide = this.state.slides[this.state.current]
     const reader = new ReadSlide(slide, this.graphics)
     if (this.state.debugging) {
-      const ex = reader.export();
-      // console.log(ex)
-      ex.map(e => this.debugger.draw(e));
+      this.graphics.text(`${this.animation.stop ? "PAUSED" : "PLAYING"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} TIME: ${new Date()}`, "#fff", 40, this.graphics.canvas.width / 2, this.graphics.canvas.height/2)
+      // const ex = reader.toArray();
+      // ex.map(e => this.debugger.draw(e));
     }
   }
 
+  loopFPS(fps) {
+    cancelAnimationFrame(this.animation.id);
+    this.animation.fps = fps
+    this.animation.fpsInterval = 1000 / this.animation.fps;
+    this.animation.then = Date.now();
+    this.animation.startTime = this.animation.then;
+    this.animation.frameCount = 0;
+    this.animation.id = requestAnimationFrame(() => this.loop());
+  }
+
   loop() {
-    this.doOneFrame()
-    requestAnimationFrame(() => this.loop())
+    if (this.animation.stop) return;
+    this.animation.now = Date.now();
+    this.animation.elapsed = this.animation.now - this.animation.then;
+    this.animation.sinceStart = this.animation.now - this.animation.startTime;
+    this.animation.currentFPS = (Math.round(1000 / (this.animation.sinceStart / ++this.animation.frameCount) * 100) / 100).toFixed(2);
+    this.animation.id = requestAnimationFrame(() => this.loop());
+    if (this.animation.elapsed > this.animation.fpsInterval) {
+      this.doOneFrame()
+      this.animation.then = this.animation.now - (this.animation.elapsed % this.animation.fpsInterval);
+    }
   }
 }
 
