@@ -50,10 +50,16 @@ class Graphics {
     c.fill();
   }
 
-  rect(color, x, y, w, h) {
+  rect(color, x, y, w, h, stroke, fill) {
     const c = this.context;
-    c.fillStyle = color;
-    c.fillRect(x, y, w, h);
+    if (stroke) {
+      c.strokeStyle = color;
+      c.strokeRect(x, y, w, h);
+    }
+    else {
+      c.fillStyle = fill || color;
+      c.fillRect(x, y, w, h);
+    }
   }
 
   text(text, color, size, x, y, align) {
@@ -216,11 +222,16 @@ class Game {
   doOneFrame() {
     const slide = this.state.slides[this.state.current]
     const reader = new ReadSlide(slide, this.graphics)
-    if (this.state.debugging) {
-      this.graphics.text(`${this.animation.stop ? "PAUSED" : "PLAYING"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} TIME: ${new Date()}`, "#fff", 20, this.graphics.canvas.width / 2, this.graphics.canvas.height/2)
-      const ex = reader.toArray();
-      ex.map(e => this.debugger.draw(e));
-    }
+    if (this.state.debugging) this.drawDebugging(reader);
+  }
+
+  drawDebugging(reader) {
+    const now = new Date()
+    const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+    const fpsInfo = `${this.animation.stop ? "PAUSED -" : "PLAYING -"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} TIME: ${time}`
+    this.debugger.fpsInfo(fpsInfo);
+    const ex = reader.toArray();
+    ex.map(e => this.debugger.draw(e));
   }
 
   loopFPS(fps) {
@@ -234,16 +245,16 @@ class Game {
   }
 
   loop() {
-    if (this.animation.stop) return;
     this.animation.now = Date.now();
     this.animation.elapsed = this.animation.now - this.animation.then;
     this.animation.sinceStart = this.animation.now - this.animation.startTime;
     this.animation.currentFPS = (Math.round(1000 / (this.animation.sinceStart / ++this.animation.frameCount) * 100) / 100).toFixed(2);
-    this.animation.id = requestAnimationFrame(() => this.loop());
     if (this.animation.elapsed > this.animation.fpsInterval) {
       this.doOneFrame()
       this.animation.then = this.animation.now - (this.animation.elapsed % this.animation.fpsInterval);
+      if (this.animation.stop) return;
     }
+    this.animation.id = requestAnimationFrame(() => this.loop());
   }
 }
 
@@ -260,9 +271,13 @@ class Debug {
   draw(e) {
     const { x, y } = e;
     this.graphics.circle('lightgreen', x, y, 1)
-    this.graphics.rect('rgba(0,255,0,0.1)', x, y, 50, 35)
-    this.graphics.text(`X: ${x.toFixed(1)}`, 'lightgreen', 10, x + 4, y + 14, 'left')
-    this.graphics.text(`Y: ${y.toFixed(1)}`, 'lightgreen', 10, x + 4, y + 27, 'left')
+    this.graphics.rect('rgba(0,255,0,0.1)', x+2, y+2, 46, 32)
+    this.graphics.text(`X  ${x.toFixed(1)}`, 'lightgreen', 10, x + 6, y + 16, 'left')
+    this.graphics.text(`Y  ${y.toFixed(1)}`, 'lightgreen', 10, x + 6, y + 29, 'left')
+  }
+
+  fpsInfo(info) {
+    this.graphics.text(info, "lightgreen", 12, 20, this.graphics.canvas.height - 20, 'left')
   }
 }
 
