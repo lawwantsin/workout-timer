@@ -8,6 +8,8 @@ export default [
     text Paige
     fg #fff
     text Paige
+    fg green
+    circle 140 50% 70%
   `
   ,
   /* SLIDE 1 */

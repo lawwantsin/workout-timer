@@ -115,42 +115,47 @@ class ReadSlide {
     const t = line.split(" ");
     const g = this.graphics
     const cmd = t[0]
+    const oldFont = parseInt(this.font)
+
+    // Positioning
+    let x = t[2]
+    let y = t[3]
+    if (x && y) {
+      this.x =  (x[x.length - 1] == '%') ? (((parseInt(x.slice(0, -1))/100.0) * g.canvas.width)) : parseInt(x);
+      if (y[y.length - 1] == '%') {
+        this.y = (((parseInt(y.slice(0, -1))/100.0) * g.canvas.height))
+      } else if (y[0] == '+') {
+        const extra = parseInt(y.slice(1, y.length))
+        const lineHeight = oldFont + extra;
+        this.y += lineHeight;
+      } else {
+        this.y = parseInt(y);
+      }
+    }
+
     switch (cmd) {
 
       case "bg":
-        g.rect(t[1], 0, 0, g.canvas.width, g.canvas.height);
+        return { type: "rect", color: t[1], x: 0, y: 0, w: g.canvas.width, h: g.canvas.height};    // Min Entity
         break;
 
       case "fg":
         this.fg = t[1];
         break;
 
-      case "font":
-        let x = t[2]
-        let y = t[3]
-        this.x =  (x[x.length - 1] == '%') ? (((parseInt(x.slice(0, -1))/100.0) * g.canvas.width)) : parseInt(x);
+      case "circle":
+        return { type: "circle", color: this.fg, x: this.x, y: this.y, size: t[1]};    // Min Entity
+        break;
 
-        const oldFont = parseInt(this.font)
+      case "font":
         this.font = parseInt(t[1])
         this.align = t[5] || 'center';
-        if (y[y.length - 1] == '%') {
-          this.y = (((parseInt(y.slice(0, -1))/100.0) * g.canvas.height))
-        } else if (y[0] == '+') {
-          const extra = parseInt(y.slice(1, y.length))
-          const lineHeight = oldFont + extra;
-          this.y += lineHeight;
-        } else {
-          this.y = parseInt(y);
-        }
         break;
 
       case "text":
-        if (this.lastY == this.y) {
-          this.y += parseInt(this.font);
-        }
-        t.shift()
-        g.text(t.join(" "), this.fg, this.font, this.x, this.y, this.align);
-        return { x: this.x, y: this.y};
+        if (this.lastY == this.y) this.y += parseInt(this.font); // Multi-line text
+        t.shift() // Chop off command "text". Everything after is taken literally.
+        return { type: "text", text: t.join(" "), color: this.fg, x: this.x, y: this.y, size: parseInt(this.font), align: this.align};  // Min Entity
         break;
     }
     this.lastY = this.y;
@@ -162,6 +167,22 @@ class ReadSlide {
 
   toArray() {
     return this.entities
+  }
+
+  draw(e) {
+    const g = this.graphics
+    const { type, text, size, align, color, x, y, w, h } = e
+    switch (type) {
+      case "circle":
+        g.circle(color, x, y, size);
+        break;
+      case "rect":
+        g.rect(color, x, y, w, h);
+        break;
+      case "text":
+        g.text(text, color, size, x, y, align);
+        break;
+    }
   }
 }
 
@@ -222,16 +243,36 @@ class Game {
   doOneFrame() {
     const slide = this.state.slides[this.state.current]
     const reader = new ReadSlide(slide, this.graphics)
+    reader.toArray().map(e => reader.draw(e));
     if (this.state.debugging) this.drawDebugging(reader);
   }
 
+  addForce(e, force) {
+    e.ax += force.x / (e.size || 1)
+    e.ay += force.y / (e.size || 1)
+  }
+
+  move(e) {
+    e.vx += e.ax
+    e.vy += e.ay
+    e.x += e.vx
+    e.y += e.vy
+    e.ax = 0
+    e.ay = 0
+  }
+
   drawDebugging(reader) {
+    const GRAVITY = {x: 0, y: 3}
     const now = new Date()
     const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
     const fpsInfo = `${this.animation.stop ? "PAUSED -" : "PLAYING -"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} TIME: ${time}`
     this.debugger.fpsInfo(fpsInfo);
     const ex = reader.toArray();
-    ex.map(e => this.debugger.draw(e));
+    ex.map(e => {
+      this.addForce(e, GRAVITY);
+      this.move(e);
+      this.debugger.draw(e);
+    })
   }
 
   loopFPS(fps) {
