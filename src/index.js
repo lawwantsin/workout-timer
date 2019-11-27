@@ -56,10 +56,10 @@ class Graphics {
     c.fillRect(x, y, w, h);
   }
 
-  text(text, color, size, x, y) {
+  text(text, color, size, x, y, align) {
     const c = this.context;
     c.fillStyle = color;
-    c.textAlign = 'center'
+    c.textAlign = align
     c.font = `normal bold ${size}px sans-serif`;
     c.fillText(text, x, y)
   }
@@ -126,6 +126,7 @@ class ReadSlide {
 
         const oldFont = parseInt(this.font)
         this.font = parseInt(t[1])
+        this.align = t[5] || 'center';
         if (y[y.length - 1] == '%') {
           this.y = (((parseInt(y.slice(0, -1))/100.0) * g.canvas.height))
         } else if (y[0] == '+') {
@@ -142,7 +143,7 @@ class ReadSlide {
           this.y += parseInt(this.font);
         }
         t.shift()
-        g.text(t.join(" "), this.fg, this.font, this.x, this.y);
+        g.text(t.join(" "), this.fg, this.font, this.x, this.y, this.align);
         return { x: this.x, y: this.y};
         break;
     }
@@ -216,9 +217,9 @@ class Game {
     const slide = this.state.slides[this.state.current]
     const reader = new ReadSlide(slide, this.graphics)
     if (this.state.debugging) {
-      this.graphics.text(`${this.animation.stop ? "PAUSED" : "PLAYING"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} TIME: ${new Date()}`, "#fff", 40, this.graphics.canvas.width / 2, this.graphics.canvas.height/2)
-      // const ex = reader.toArray();
-      // ex.map(e => this.debugger.draw(e));
+      this.graphics.text(`${this.animation.stop ? "PAUSED" : "PLAYING"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} TIME: ${new Date()}`, "#fff", 20, this.graphics.canvas.width / 2, this.graphics.canvas.height/2)
+      const ex = reader.toArray();
+      ex.map(e => this.debugger.draw(e));
     }
   }
 
@@ -257,10 +258,11 @@ class Debug {
   }
 
   draw(e) {
-    const { x, y } = this;
-    const g = this.graphics
-    g.text(`X: ${x}`, 'white', 30, x, y)
-    g.text(`Y: ${y}`, 'white', 30, x, y+30)
+    const { x, y } = e;
+    this.graphics.circle('lightgreen', x, y, 1)
+    this.graphics.rect('rgba(0,255,0,0.1)', x, y, 50, 35)
+    this.graphics.text(`X: ${x.toFixed(1)}`, 'lightgreen', 10, x + 4, y + 14, 'left')
+    this.graphics.text(`Y: ${y.toFixed(1)}`, 'lightgreen', 10, x + 4, y + 27, 'left')
   }
 }
 
