@@ -245,6 +245,16 @@ class Game {
     const reader = new ReadSlide(slide, this.graphics)
     reader.toArray().map(e => reader.draw(e));
     if (this.state.debugging) this.drawDebugging(reader);
+    this.switchSlide();
+  }
+
+  switchSlide() {
+    if (this.animation.sinceStart > 30000) {
+      this.animation.startTime = Date.now();
+      this.state.current++;
+    }
+    if (this.state.current > this.state.slides.length - 1) this.state.current = 0;
+    if (this.state.current < 0) this.state.current = this.state.slides.length - 1;
   }
 
   addForce(e, force) {
@@ -265,7 +275,7 @@ class Game {
     const GRAVITY = {x: 0, y: 3}
     const now = new Date()
     const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
-    const fpsInfo = `${this.animation.stop ? "PAUSED -" : "PLAYING -"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} TIME: ${time}`
+    const fpsInfo = `${this.animation.stop ? "PAUSED -" : "PLAYING -"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} | TIMER: ${(this.animation.sinceStart/1000).toFixed()} |TIME: ${time}`
     this.debugger.fpsInfo(fpsInfo);
     const ex = reader.toArray();
     ex.map(e => {
