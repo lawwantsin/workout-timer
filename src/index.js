@@ -5,6 +5,7 @@ import Data from "./data.js"
 // INPUT
 // ========================================================================
 let KEYS_PRESSED = {}
+
 class Input {
   constructor() {
     console.error("Please use as Singleton");
@@ -147,6 +148,10 @@ class ReadSlide {
         return { type: "circle", color: this.fg, x: this.x, y: this.y, size: t[1]};    // Min Entity
         break;
 
+      case "rect":
+        return { type: "rect", color: this.fg, x: this.x, y: this.y, w: t[4], h: t[5] };    // Min Entity
+        break;
+
       case "font":
         this.font = parseInt(t[1])
         this.align = t[5] || 'center';
@@ -244,12 +249,17 @@ class Game {
     const slide = this.state.slides[this.state.current]
     const reader = new ReadSlide(slide, this.graphics)
     reader.toArray().map(e => reader.draw(e));
+    const secs = 3 - Math.floor(this.animation.sinceStart/1000).toFixed();
+    if (secs < 0) this.animation.startTime = Date.now();
+    else this.graphics.text(secs, 'black', 200, 200, 360)
     if (this.state.debugging) this.drawDebugging(reader);
     this.switchSlide();
   }
 
   switchSlide() {
-    if (this.animation.sinceStart > 30000) {
+    const SLIDE_TIME = 3000
+
+    if (this.animation.sinceStart > SLIDE_TIME) {
       this.animation.startTime = Date.now();
       this.state.current++;
     }

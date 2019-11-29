@@ -2,35 +2,41 @@ export default [
 
   /* SLIDE 2 */
   `
-    fg black
+    fg white
     bg red
-    font 50 50% 10%
-    text Paige
+    font 50 60% 10%
+    text Start
     fg #fff
-    text Paige
-    fg green
-    circle 140 50% 70%
+    rect white 50% 10 30 800
+    rect white 10% 50% 30 800
+    fg white
+    circle 140 10% 30%
   `
   ,
   /* SLIDE 1 */
   `
-    fg red
-    bg black
-    font 200 50% 10%
-    text She
-    fg #222
-    text Is
-    font 200 50% +0
-    text Cute
+    fg white
+    bg red
+    font 50 60% 10%
+    text Pushups
+    fg #fff
+    rect white 50% 10 30 800
+    rect white 10% 50% 30 800
+    fg white
+    circle 140 10% 30%
   `
   ,
 
   /* SLIDE 3 */
   `
-    fg green
-    bg blue
-    font 100 600 50%
-    text She is cute
-
+    fg white
+    bg red
+    font 50 60% 10%
+    text Situps
+    fg #fff
+    rect white 50% 10 30 800
+    rect white 10% 50% 30 800
+    fg white
+    circle 140 10% 30%
   `
 ]
