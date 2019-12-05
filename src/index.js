@@ -1,5 +1,5 @@
 import "./index.css"
-import Data from "./data.js"
+import Data from "./data.json"
 
 // ========================================================================
 // INPUT
@@ -43,7 +43,17 @@ class Graphics {
     this.fps();
   }
 
+  validate() {
+    const args = Array.from(arguments)
+    args.map(a => {
+      if (typeof a === 'undefined' || a === null) {
+        console.error(`Wrong arguments drawing graphics: ${args.join(", ")}`);
+      }
+    })
+  }
+
   circle(color, x, y, r) {
+    this.validate(color, x, y, r);
     const c = this.context;
     c.fillStyle = color;
     c.beginPath();
@@ -52,6 +62,7 @@ class Graphics {
   }
 
   rect(color, x, y, w, h, stroke, fill) {
+    this.validate(color, x, y, w, h);
     const c = this.context;
     if (stroke) {
       c.strokeStyle = color;
@@ -64,9 +75,10 @@ class Graphics {
   }
 
   text(text, color, size, x, y, align) {
+    this.validate(text, color, size, x, y);
     const c = this.context;
     c.fillStyle = color;
-    c.textAlign = align
+    c.textAlign = align || 'center'
     c.font = `normal bold ${size}px sans-serif`;
     c.fillText(text, x, y)
   }
@@ -85,113 +97,6 @@ class Graphics {
 }
 
 // ========================================================================
-// INTERPRETER
-// ========================================================================
-
-class ReadSlide {
-  constructor(slide, graphics) {
-    this.fg = 'white'
-    this.font = 100
-    this.x = 0
-    this.y = 0
-    this.lastY = null;
-    this.graphics = graphics;
-    this.entities = [];
-    const lines = this.parse(slide)
-    for (var i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const entity = this.interpet(line)
-      if (entity) this.entities.push(entity)
-    }
-  }
-
-  /*
-  SAMPLE SLIDE
-  fg black
-  bg red
-  font 200 50% 50%
-  text Such a sweet feature
-  */
-  interpet(line) {
-    const t = line.split(" ");
-    const g = this.graphics
-    const cmd = t[0]
-    const oldFont = parseInt(this.font)
-
-    // Positioning
-    let x = t[2]
-    let y = t[3]
-    if (x && y) {
-      this.x =  (x[x.length - 1] == '%') ? (((parseInt(x.slice(0, -1))/100.0) * g.canvas.width)) : parseInt(x);
-      if (y[y.length - 1] == '%') {
-        this.y = (((parseInt(y.slice(0, -1))/100.0) * g.canvas.height))
-      } else if (y[0] == '+') {
-        const extra = parseInt(y.slice(1, y.length))
-        const lineHeight = oldFont + extra;
-        this.y += lineHeight;
-      } else {
-        this.y = parseInt(y);
-      }
-    }
-
-    switch (cmd) {
-
-      case "bg":
-        return { type: "rect", color: t[1], x: 0, y: 0, w: g.canvas.width, h: g.canvas.height};    // Min Entity
-        break;
-
-      case "fg":
-        this.fg = t[1];
-        break;
-
-      case "circle":
-        return { type: "circle", color: this.fg, x: this.x, y: this.y, size: t[1]};    // Min Entity
-        break;
-
-      case "rect":
-        return { type: "rect", color: this.fg, x: this.x, y: this.y, w: t[4], h: t[5] };    // Min Entity
-        break;
-
-      case "font":
-        this.font = parseInt(t[1])
-        this.align = t[5] || 'center';
-        break;
-
-      case "text":
-        if (this.lastY == this.y) this.y += parseInt(this.font); // Multi-line text
-        t.shift() // Chop off command "text". Everything after is taken literally.
-        return { type: "text", text: t.join(" "), color: this.fg, x: this.x, y: this.y, size: parseInt(this.font), align: this.align};  // Min Entity
-        break;
-    }
-    this.lastY = this.y;
-  }
-
-  parse(slide) {
-    return slide.split("\n").map(l => l.trim()).filter(l => l != "");
-  }
-
-  toArray() {
-    return this.entities
-  }
-
-  draw(e) {
-    const g = this.graphics
-    const { type, text, size, align, color, x, y, w, h } = e
-    switch (type) {
-      case "circle":
-        g.circle(color, x, y, size);
-        break;
-      case "rect":
-        g.rect(color, x, y, w, h);
-        break;
-      case "text":
-        g.text(text, color, size, x, y, align);
-        break;
-    }
-  }
-}
-
-// ========================================================================
 // GAME LOOP
 // ========================================================================
 
@@ -200,6 +105,12 @@ class Game {
     this.graphics = new Graphics();
     this.debugger = new Debug(this.graphics)
     this.loopId = null;
+    this.phases = ["warmups", "exercises", "stretches"];
+    this.REP_TIMES = {
+      warmups: 30,
+      exercises: 60,
+      stretches: 30
+    }
     this.animation = {
       inputFPS: 0,
       id: 0,
@@ -214,9 +125,12 @@ class Game {
       stop: false
     }
     this.state = {
-      slides: Data,
+      phase: 0,
+      warmups: Data.warmups,
+      exercises: Data.exercises,
+      stretches: Data.stretches,
       current: 0,
-      debugging: false
+      debugging: false,
     }
   }
 
@@ -226,8 +140,14 @@ class Game {
   }
 
   handlePress(e) {
-    if (e.key == "ArrowRight") this.state.current++;
-    if (e.key == "ArrowLeft") this.state.current--;
+    if (e.key == "ArrowRight") {
+      this.state.current++;
+      this.animation.startTime = Date.now();
+    }
+    if (e.key == "ArrowLeft") {
+      this.state.current--;
+      this.animation.startTime = Date.now();
+    }
     if (e.key == "ArrowUp") {
       this.animation.fps *= 2
       this.loopFPS(this.animation.fps)
@@ -241,51 +161,55 @@ class Game {
       this.animation.stop = !this.animation.stop;
       this.loopFPS(this.animation.fps)
     }
-    if (this.state.current > this.state.slides.length - 1) this.state.current = 0;
-    if (this.state.current < 0) this.state.current = this.state.slides.length - 1;
+    console.log("START", this.state.current, this.state.phase)
   }
 
   doOneFrame() {
-    const slide = this.state.slides[this.state.current]
-    const reader = new ReadSlide(slide, this.graphics)
-    reader.toArray().map(e => reader.draw(e));
-    const secs = 3 - Math.floor(this.animation.sinceStart/1000).toFixed();
-    if (secs < 0) this.animation.startTime = Date.now();
-    else this.graphics.text(secs, 'black', 200, 200, 360)
-    if (this.state.debugging) this.drawDebugging(reader);
-    this.switchSlide();
+    const G = this.graphics;
+    const w = G.canvas.width;
+    const h = G.canvas.height;
+    const r = 150;
+    this.switch();
+    let currentPhase = this.phases[this.state.phase];
+    const exercise = this.state[currentPhase][this.state.current];
+    const secs = this.REP_TIMES[currentPhase] - Math.floor(this.animation.sinceStart/1000).toFixed();
+    G.rect('black', 0, 0, w, h);
+    G.text(exercise.name, 'white', 60, w/2, 100);
+    G.circle('white', w/2, h/2, r);
+    G.text(secs, 'black', 200, w/2, h/2 + 70);
   }
 
-  switchSlide() {
-    const SLIDE_TIME = 3000
-
-    if (this.animation.sinceStart > SLIDE_TIME) {
+  switch() {
+    if (this.animation.sinceStart > this.REP_TIMES[this.phases[this.state.phase]] * 1000) {
       this.animation.startTime = Date.now();
       this.state.current++;
     }
-    if (this.state.current > this.state.slides.length - 1) this.state.current = 0;
-    if (this.state.current < 0) this.state.current = this.state.slides.length - 1;
-  }
-
-  addForce(e, force) {
-    e.ax += force.x / (e.size || 1)
-    e.ay += force.y / (e.size || 1)
-  }
-
-  move(e) {
-    e.vx += e.ax
-    e.vy += e.ay
-    e.x += e.vx
-    e.y += e.vy
-    e.ax = 0
-    e.ay = 0
+    let currentPhase = this.phases[this.state.phase]
+    if (this.state.current > this.state[currentPhase].length - 1) {
+      this.state.phase++;
+      currentPhase = this.phases[this.state.phase]
+      if (this.state.phase > this.phases.length - 1) {
+        this.state.phase = 0;
+        this.state.current = 0;
+      }
+      if (this.state.phase < 0) {
+        this.state.phase = this.phases.length - 1;
+        this.state.current = this.state[currentPhase].length - 1;
+      }
+    }
+    if (this.state.current < 0) {
+      this.state.phase--;
+      if (this.state.phase > this.phases.length) this.state.phase = 0;
+      if (this.state.phase < 0) this.state.phase = this.phases.length - 1;
+      currentPhase = this.phases[this.state.phase];
+      this.state.current = this.state[currentPhase].length - 1;
+    }
   }
 
   drawDebugging(reader) {
-    const GRAVITY = {x: 0, y: 3}
-    const now = new Date()
-    const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
-    const fpsInfo = `${this.animation.stop ? "PAUSED -" : "PLAYING -"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} | TIMER: ${(this.animation.sinceStart/1000).toFixed()} |TIME: ${time}`
+    const now = new Date();
+    const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    const fpsInfo = `${this.animation.stop ? "PAUSED -" : "PLAYING -"} INPUT: ${this.animation.fps} FPS: ${this.animation.currentFPS} | COUNT: ${this.animation.frameCount} | TIMER: ${(this.animation.sinceStart/1000).toFixed()} |TIME: ${time}`;
     this.debugger.fpsInfo(fpsInfo);
     const ex = reader.toArray();
     ex.map(e => {
@@ -297,7 +221,7 @@ class Game {
 
   loopFPS(fps) {
     cancelAnimationFrame(this.animation.id);
-    this.animation.fps = fps
+    this.animation.fps = fps;
     this.animation.fpsInterval = 1000 / this.animation.fps;
     this.animation.then = Date.now();
     this.animation.startTime = this.animation.then;

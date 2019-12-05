@@ -10,6 +10,7 @@ module.exports = {
     publicPath: "/",
   },
   devServer: {
+    overlay: true,
     hot: true
   },
   devtool: 'source-map',

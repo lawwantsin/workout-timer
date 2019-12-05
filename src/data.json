@@ -1,0 +1,354 @@
+{
+  "warmups": [
+    {
+      "name" : "Glute Bridge",
+      "type" : "warmup",
+      "frames" : 3,
+      "image" : "images/iphone/visuals/warmup_glutebridge.png",
+      "audio" : "/audio/iphone/visuals/warmup_glutebridge.mp3",
+      "cues" : [
+        "Heels under the knees",
+        "Lift tailbone until lax contraction, pause",
+        "Turn on the muscles at the top",
+        "Turn off the muscles on the bottom"
+      ]
+    },
+    {
+      "name" : "Windshield Wipers",
+      "type" : "warmup",
+      "frames" : 4,
+      "image" : "images/iphone/visuals/warmup_windshieldwipers.png",
+      "audio" : "/audio/iphone/visuals/warmup_windshieldwipers.mp3",
+      "cues" : [
+        "Lay on back",
+        "Bring knees down to the left",
+        "Then bring them back to the right.",
+        "Even breath "
+      ]
+    },
+    {
+      "name" : "Thighs",
+      "type" : "warmup",
+      "frames" : 3,
+      "image" : "images/iphone/visuals/warmup_thigh.png",
+      "audio" : "/audio/iphone/visuals/warmup_thigh.mp3",
+      "cues" : [
+        "Squeeze knees and ankles together throughout",
+        "Push top knee towards the floor",
+        "Press both shoulder blades into the floor",
+        "Breathe out on the down in on the up"
+      ]
+    },
+    {
+      "name" : "Plank",
+      "type" : "warmup",
+      "frames" : 1,
+      "image" : "images/iphone/visuals/warmup_plank.png",
+      "audio" : "/audio/iphone/visuals/warmup_plank.mp3",
+      "cues" : [
+        "elbows directly under shoulders",
+        "feet shoulder width apart",
+        "belly button stays above the shoulders",
+        "relax the hands",
+        "keep the breathe flowing, contract but breathe"
+      ]
+    },
+    {
+      "name" : "Right Side Plank",
+      "type" : "warmup",
+      "frames" : 1,
+      "image" : "images/iphone/visuals/warmup_sideplank_right.png",
+      "audio" : "/audio/iphone/visuals/warmup_sideplank_right.mp3",
+      "cues" : [
+        "Feet on top of each other",
+        "Elbow directly under the shoulder",
+        "Shoulder, hip, knee, ankle all in straight line"
+      ]
+    },
+    {
+      "name" : "Left Side Plank",
+      "type" : "warmup",
+      "frames" : 1,
+      "image" : "images/iphone/visuals/warmup_sideplank_left.png",
+      "audio" : "/audio/iphone/visuals/warmup_sideplank_left.mp3",
+      "cues" : [
+        "feet on top of each other",
+        "elbow directly under the shoulder",
+        "shoulder, hip, knee, ankle all in straight line"
+      ]
+    }
+  ],
+  "exercises": [
+  [{
+    "name" : "Split Squats Right",
+    "type" : "training",
+    "frames" : 2,
+    "image" : "images/iphone/visuals/training_splitsquat_right.png",
+    "audio" : "/audio/iphone/visuals/training_splitsquat_right.mp3",
+    "cues" : [
+      "Keep knee above the heel during both phases",
+      "Shoulders and hips go up and down together",
+      "Avoid the urge to bring the torso forward",
+      "Shoulders and sit-bones drop straight to the floor",
+      "Breath in on the down out on the up",
+      "Fight gravity in both directions"
+    ]
+  },
+  {
+    "name" : "Twist Crunch",
+    "type" : "training",
+    "frames" : 1,
+    "image" : "images/iphone/visuals/training_twistcrunch.png",
+    "audio" : "/audio/iphone/visuals/training_twistcrunch.mp3",
+    "cues" : [
+      "Raise right ankle straight leg, perpendicular to the floor",
+      "Think about using the belly muscles to raise the leg",
+      "Lift and twist the torso as if your left shoulder were to touch your right knee.",
+      "Breath in on the down and out at the top",
+      "Fight gravity in both directions"
+    ]
+  }],
+  [{
+    "name" : "Split Squats Left",
+    "type" : "training",
+    "frames" : 2,
+    "image" : "images/iphone/visuals/training_splitsquat_left.png",
+    "audio" : "/audio/iphone/visuals/training_splitsquat_left.mp3",
+    "cues" : [
+      "Keep knee above the heel during both phases",
+      "Shoulders and hips go up and down together",
+      "Avoid the urge to bring the torso forward",
+      "Shoulders and sit-bones drop straight to the floor",
+      "Breath in on the down out on the up",
+      "Fight gravity in both directions"
+    ]
+  },
+  {
+    "name" : "Superman",
+    "type" : "training",
+    "frames" : 2,
+    "image" : "images/iphone/visuals/training_superman.png",
+    "audio" : "/audio/iphone/visuals/training_superman.mp3",
+    "cues" : [
+      "Thumbs up to the sky at all times",
+      "Arms out like a Y at the top, bending the body in half backwards",
+      "Hold squeeze for a beat",
+      "Breath in on the down and out at the top",
+      "Fight gravity in both directions"
+    ]
+  }],
+  [{
+    "name" : "Leg Curls",
+    "type" : "training",
+    "frames" : 2,
+    "image" : "images/iphone/visuals/training_legcurls.png",
+    "audio" : "/audio/iphone/visuals/training_legcurls.mp3",
+    "cues" : [
+      "Curl your legs",
+      "Curl them again",
+      "Down and up"
+    ]
+  },
+  {
+    "name" : "Plank",
+    "type" : "training",
+    "frames" : 1,
+    "image" : "images/iphone/visuals/warmup_plank.png",
+    "audio" : "/audio/iphone/visuals/warmup_plank.mp3",
+    "cues" : [
+      "elbows directly under shoulders",
+      "feet shoulder width apart",
+      "belly button stays above the shoulders",
+      "relax the hands",
+      "keep the breathe flowing, contract but breathe"
+    ]
+  }],
+  [{
+    "name" : "Jack Knife Crunch Left Side",
+    "type" : "training",
+    "frames" : 2,
+    "image" : "images/iphone/visuals/training_jackknife_left.png",
+    "audio" : "/audio/iphone/visuals/training_jackknife_left.mp3",
+    "cues" : [
+      "Right elbow on the floor",
+      "Diagonal crunch touch elbow to side of the knee",
+      "Squeeze knees and ankles together",
+      "Turn on the muscles at the top turn off the muscles on the bottom",
+      "Breathe in at the bottom out at the top"
+    ]
+  },
+  {
+    "name" : "Jack Knife Crunch Right Side",
+    "type" : "training",
+    "image" : "images/iphone/visuals/training_jackknife_right.png",
+    "frames" : 2,
+    "audio" : "/audio/iphone/visuals/training_jackknife_right.mp3",
+    "cues" : [
+      "Left elbow on the floor",
+      "Diagonal crunch touch elbow to side of the knee",
+      "Squeeze knees and ankles together",
+      "Turn on the muscles at the top turn off the muscles on the bottom",
+      "Breathe in at the bottom out at the top"
+    ]
+  }],
+  [{
+    "name" : "Flamingos Right",
+    "type" : "training",
+    "image" : "images/iphone/visuals/training_flamingo_right.png",
+    "frames" : 2,
+    "audio" : "/audio/iphone/visuals/training_flamingo_right.mp3",
+    "cues" : [
+      "Right arm up, right leg up",
+      "Right knee bent 90 degrees",
+      "Heel directly below the knee",
+      "Right shoulder and right heel move together",
+      "Breathe in on the way down out on the way up"
+    ]
+  },
+  {
+    "name" : "Flamingos Left",
+    "type" : "training",
+    "image" : "images/iphone/visuals/training_flamingo_left.png",
+    "frames" : 2,
+    "audio" : "/audio/iphone/visuals/training_flamingo_left.mp3",
+    "cues" : [
+      "Left arm up, right leg up",
+      "Left knee bent 90 degrees",
+      "Heel directly below the knee",
+      "Left shoulder and right heel move together",
+      "Breathe in on the way down out on the way up"
+    ]
+  }]],
+  "stretches": [
+    {
+      "name" : "Left Hamstring Stretch",
+      "type" : "stretch",
+      "image" : "images/iphone/visuals/stretch_hamstring_left.png",
+      "frames" : 2,
+      "audio" : "/audio/iphone/visuals/stretch_hamstring_left.mp3",
+      "cues" : [
+        "Grab middle of leg",
+        "Bring knee as close as possible to your arm pit and hold",
+        "Straighten leg heel first towards the sky"
+      ]
+    },
+    {
+      "name" : "Right Hamstring Stretch",
+      "type" : "stretch",
+      "image" : "images/iphone/visuals/stretch_hamstring_right.png",
+      "frames" : 2,
+      "audio" : "/audio/iphone/visuals/stretch_hamstring_right.mp3",
+      "cues" : [
+        "Grab middle of leg",
+        "Bring knee as close as possible to your arm pit and hold",
+        "Straighten leg heel first towards the sky"
+      ]
+    },
+    {
+      "name" : "Left Quad Stretch",
+      "type" : "stretch",
+      "image" : "images/iphone/visuals/stretch_quad_left.png",
+      "frames" : 2,
+      "audio" : "/audio/iphone/visuals/stretch_quad_left.mp3",
+      "cues" : [
+        "Grab ankle, keep foot loose",
+        "Heel stays in contact with the glute",
+        "Right shoulder towards floor at the same rate as right knee back",
+        "Keep heel on glute"
+      ]
+    },
+    {
+      "name" : "Right Quad Stretch",
+      "type" : "stretch",
+      "image" : "images/iphone/visuals/stretch_quad_right.png",
+      "frames" : 2,
+      "audio" : "/audio/iphone/visuals/stretch_quad_right.mp3",
+      "cues" : [
+        "Grab ankle, keep foot loose",
+        "Heel stays in contact with the glute",
+        "Right shoulder towards floor at the same rate as right knee back",
+        "Keep heel on glute"
+      ]
+    },
+    {
+      "name" : "Right Psoas Stretch",
+      "type" : "stretch",
+      "image" : "images/iphone/visuals/stretch_psoas_right.png",
+      "frames" : 1,
+      "audio" : "/audio/iphone/visuals/stretch_psoas_right.mp3",
+      "cues" : [
+        "Right knee behind hip",
+        "Left heel in front of Left knee",
+        "Left forearm on Left thigh",
+        "Shoulders stay in the same plane as the hips",
+        "Right arm parallel to the floor"
+      ]
+    },
+    {
+      "name" : "Left Psoas Stretch",
+      "type" : "stretch",
+      "image" : "images/iphone/visuals/stretch_psoas_left.png",
+      "frames" : 1,
+      "audio" : "/audio/iphone/visuals/stretch_psoas_left.mp3",
+      "cues" : [
+        "Left knee behind hip",
+        "Right heel in front of Left knee",
+        "Right forearm on Left thigh",
+        "Shoulders stay in the same plane as the hips",
+        "Right arm parallel to the floor"
+      ]
+    },
+    {
+      "name" : "Left Groin Stretch",
+      "type" : "stretch",
+      "image" : "images/iphone/visuals/stretch_groin_left.png",
+      "frames" : 3,
+      "audio" : "/audio/iphone/visuals/stretch_groin_left.mp3",
+      "cues" : [
+        "Push heel into the floor and wall simultaneously",
+        "Drop hand below the knee and put weight into it",
+        "Stretch to reach opposite arm parallel to the floor"
+      ]
+    },
+    {
+      "name" : "Right Groin Stretch",
+      "type" : "stretch",
+      "image" : "images/iphone/visuals/stretch_groin_right.png",
+      "frames" : 3,
+      "audio" : "/audio/iphone/visuals/stretch_groin_right.mp3",
+      "cues" : [
+        "Push heel into the floor and wall simultaneously",
+        "Drop hand below the knee and put weight into it",
+        "Stretch to reach opposite arm parallel to the floor"
+      ]
+    },
+    {
+      "name" : "Left Shoulder Stretch",
+      "type" : "stretch",
+      "image" : "images/iphone/visuals/stretch_shoulder_left.png",
+      "frames" : 1,
+      "audio" : "/audio/iphone/visuals/stretch_shoulder_left.mp3",
+      "cues" : [
+        "Grab upper arm near shoulder",
+        "Pull left arm to",
+        "Keep hips and shoulders in same plane",
+        "Keep body weight in left leg bot both feet flat on floor",
+        "Breathe in at the top, out as you bend down"
+      ]
+    },
+    {
+      "name" : "Right Shoulder Stretch",
+      "type" : "stretch",
+      "frames" : 1,
+      "image" : "images/iphone/visuals/stretch_shoulder_right.png",
+      "audio" : "/audio/iphone/visuals/stretch_shoulder_right.mp3",
+      "cues" : [
+        "Grab upper arm near shoulder",
+        "Pull right arm to",
+        "Keep hips and shoulders in same plane",
+        "Keep body weight in right leg bot both feet flat on floor",
+        "Breathe in at the top, out as you bend down"
+      ]
+    }
+  ]
+}
