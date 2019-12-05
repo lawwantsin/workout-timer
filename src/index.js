@@ -127,7 +127,7 @@ class Game {
     this.state = {
       phase: 0,
       warmups: Data.warmups,
-      exercises: Data.exercises,
+      exercises: Data.exercises.flat(),
       stretches: Data.stretches,
       current: 0,
       debugging: false,
@@ -161,7 +161,7 @@ class Game {
       this.animation.stop = !this.animation.stop;
       this.loopFPS(this.animation.fps)
     }
-    console.log("START", this.state.current, this.state.phase)
+    console.log("PHASE: ", this.state.phase, "EX: ", this.state.current)
   }
 
   doOneFrame() {
@@ -179,24 +179,39 @@ class Game {
     G.text(secs, 'black', 200, w/2, h/2 + 70);
   }
 
+  updatePhase() {
+    const currentPhase = this.phases[this.state.phase]
+    if (this.state.phase > this.phases.length - 1) {
+      this.state.phase = 0;
+      this.state.current = 0;
+    }
+    if (this.state.phase < 0) {
+      this.state.phase = this.phases.length - 1;
+      this.state.current = this.state[currentPhase].length - 1;
+    }
+  }
+
   switch() {
+    // Over time
     if (this.animation.sinceStart > this.REP_TIMES[this.phases[this.state.phase]] * 1000) {
       this.animation.startTime = Date.now();
       this.state.current++;
     }
     let currentPhase = this.phases[this.state.phase]
+    // Over top
     if (this.state.current > this.state[currentPhase].length - 1) {
       this.state.phase++;
+      this.state.current = 0;
       currentPhase = this.phases[this.state.phase]
       if (this.state.phase > this.phases.length - 1) {
         this.state.phase = 0;
-        this.state.current = 0;
       }
       if (this.state.phase < 0) {
         this.state.phase = this.phases.length - 1;
         this.state.current = this.state[currentPhase].length - 1;
       }
     }
+    // Under bottom
     if (this.state.current < 0) {
       this.state.phase--;
       if (this.state.phase > this.phases.length) this.state.phase = 0;
