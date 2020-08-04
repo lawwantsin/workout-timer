@@ -1,6 +1,11 @@
 {
   "warmups": [
     {
+      "name": "Exercise Timer",
+      "type" : "welcome",
+      "cues": ["Right and left to move, Space to Pause", "Have Fun!"]
+    },
+    {
       "name" : "Glute Bridge",
       "type" : "warmup",
       "frames" : 3,
@@ -46,11 +51,11 @@
       "image" : "images/iphone/visuals/warmup_plank.png",
       "audio" : "/audio/iphone/visuals/warmup_plank.mp3",
       "cues" : [
-        "elbows directly under shoulders",
-        "feet shoulder width apart",
-        "belly button stays above the shoulders",
-        "relax the hands",
-        "keep the breathe flowing, contract but breathe"
+        "Elbows directly under shoulders",
+        "Feet shoulder width apart",
+        "Belly button stays above the shoulders",
+        "Relax the hands",
+        "Keep the breathe flowing, contract but breathe"
       ]
     },
     {
@@ -72,9 +77,9 @@
       "image" : "images/iphone/visuals/warmup_sideplank_left.png",
       "audio" : "/audio/iphone/visuals/warmup_sideplank_left.mp3",
       "cues" : [
-        "feet on top of each other",
-        "elbow directly under the shoulder",
-        "shoulder, hip, knee, ankle all in straight line"
+        "Feet on top of each other",
+        "Elbow directly under the shoulder",
+        "Shoulder, hip, knee, ankle all in straight line"
       ]
     }
   ],
@@ -156,11 +161,11 @@
     "image" : "images/iphone/visuals/warmup_plank.png",
     "audio" : "/audio/iphone/visuals/warmup_plank.mp3",
     "cues" : [
-      "elbows directly under shoulders",
-      "feet shoulder width apart",
-      "belly button stays above the shoulders",
-      "relax the hands",
-      "keep the breathe flowing, contract but breathe"
+      "Elbows directly under shoulders",
+      "Feet shoulder width apart",
+      "Belly button stays above the shoulders",
+      "Relax the hands",
+      "Keep the breathe flowing, contract but breathe"
     ]
   }],
   [{

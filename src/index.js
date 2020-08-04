@@ -40,7 +40,6 @@ class Graphics {
     this.context = this.canvas.getContext('2d');
     window.addEventListener('resize', () => this.resize())
     this.resize();
-    this.fps();
   }
 
   validate() {
@@ -74,13 +73,18 @@ class Graphics {
     }
   }
 
-  text(text, color, size, x, y, align) {
+  text(text, color, size, x, y, align, maxWidth) {
     this.validate(text, color, size, x, y);
     const c = this.context;
     c.fillStyle = color;
     c.textAlign = align || 'center'
     c.font = `normal bold ${size}px sans-serif`;
-    c.fillText(text, x, y)
+    const lines = maxWidth ? this.wrappingText(text, maxWidth) : [text]
+    lines.map((line, i) => {
+      const lh = (size + 15) * i
+      c.fillText(line, x, y + lh)
+    });
+
   }
 
   resize() {
@@ -88,12 +92,40 @@ class Graphics {
     this.canvas.height = window.innerHeight;
   }
 
-  fps() {
-    const now = performance.now();
-    const delta = now - this.last;
-    this.last = now
-    this.text(delta, 'red', 50, 20, 20)
+  wrappingText(text, maxWidth) {
+    const c = this.context
+    var lines = [],
+    words = text.replace(/\n\n/g,' ` ').replace(/(\n\s|\s\n)/g,'\r')
+    .replace(/\s\s/g,' ').replace('`',' ').replace(/(\r|\n)/g,' '+' ').split(' '),
+    space = c.measureText(' ').width,
+    width = 0,
+    line = '',
+    word = '',
+    len = words.length,
+    w = 0,
+    i;
+    for (i = 0; i < len; i++) {
+      word = words[i];
+      w = word ? c.measureText(word).width : 0;
+      if (w) {
+        width = width + space + w;
+      }
+      if (w > maxWidth) {
+        return [];
+      } else if (w && width < maxWidth) {
+        line += (i ? ' ' : '') + word;
+      } else {
+        !i || lines.push(line !== '' ? line.trim() : '');
+        line = word;
+        width = w;
+      }
+    }
+    if (len !== i || line !== '') {
+      lines.push(line);
+    }
+    return lines;
   }
+
 }
 
 // ========================================================================
@@ -157,9 +189,9 @@ class Game {
       this.loopFPS(this.animation.fps)
     }
     if (e.key == "Escape") this.state.debugging = !this.state.debugging;
-    if (e.key == "CapsLock") {
+    if (e.keyCode == 32) {
       this.animation.stop = !this.animation.stop;
-      this.loopFPS(this.animation.fps)
+      if (!this.animation.stop) this.loopFPS(this.animation.fps, true)
     }
     console.log("PHASE: ", this.state.phase, "EX: ", this.state.current)
   }
@@ -177,18 +209,19 @@ class Game {
     G.text(exercise.name, 'white', 60, w/2, 100);
     G.circle('white', w/2, h/2, r);
     G.text(secs, 'black', 200, w/2, h/2 + 70);
+    const cueNum = this.getCueNum(exercise, currentPhase, secs);
+    const cue = exercise.cues[cueNum];
+    G.text(cue, 'white', 50, w/2, h/2 + 270, 'center', w - 100);
   }
 
-  updatePhase() {
-    const currentPhase = this.phases[this.state.phase]
-    if (this.state.phase > this.phases.length - 1) {
-      this.state.phase = 0;
-      this.state.current = 0;
-    }
-    if (this.state.phase < 0) {
-      this.state.phase = this.phases.length - 1;
-      this.state.current = this.state[currentPhase].length - 1;
-    }
+  getCueNum(exercise, currentPhase, secs) {
+    const total = exercise.cues.length
+    const repSecLength = this.REP_TIMES[currentPhase]
+    const perCue = repSecLength / total;
+    let currentCue = Math.floor((repSecLength - secs) / repSecLength * total);
+    if (currentCue > total-1) currentCue = total-1;
+    if (currentCue < 0) currentCue = 0;
+    return currentCue
   }
 
   switch() {
@@ -234,19 +267,29 @@ class Game {
     })
   }
 
-  loopFPS(fps) {
+  loopFPS(fps, maintainTime) {
     cancelAnimationFrame(this.animation.id);
     this.animation.fps = fps;
     this.animation.fpsInterval = 1000 / this.animation.fps;
-    this.animation.then = Date.now();
+    if (!maintainTime) {
+      this.animation.frameCount = 0;
+      this.animation.then = Date.now();
+    }
+    else {
+       this.animation.frameCount = this.animation.frameCount;
+    }
     this.animation.startTime = this.animation.then;
-    this.animation.frameCount = 0;
-    this.animation.id = requestAnimationFrame(() => this.loop());
+    this.animation.id = requestAnimationFrame(() => this.loop(maintainTime));
   }
 
-  loop() {
+  loop(maintainTime) {
     this.animation.now = Date.now();
-    this.animation.elapsed = this.animation.now - this.animation.then;
+    if (maintainTime) {
+      this.animation.elapsed = 0;
+    }
+    else {
+      this.animation.elapsed = this.animation.now - this.animation.then;
+    }
     this.animation.sinceStart = this.animation.now - this.animation.startTime;
     this.animation.currentFPS = (Math.round(1000 / (this.animation.sinceStart / ++this.animation.frameCount) * 100) / 100).toFixed(2);
     if (this.animation.elapsed > this.animation.fpsInterval) {
@@ -257,6 +300,7 @@ class Game {
     this.animation.id = requestAnimationFrame(() => this.loop());
   }
 }
+
 
 
 // ========================================================================
